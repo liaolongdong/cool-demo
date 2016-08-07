@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>电子钟</title>
+</head>
+<body>
+	<canvas id="canvas" width="1024" height="500" style="display: block;margin: 0 auto; border-bottom: 1px solid #aaa;"></canvas>
+	<script>
+		// 数字矩阵
+var digit =
+	[
+		[
+			[0, 0, 1, 1, 1, 0, 0],
+			[0, 1, 1, 0, 1, 1, 0],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[0, 1, 1, 0, 1, 1, 0],
+			[0, 0, 1, 1, 1, 0, 0]
+		], //0
+		[
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 1, 1, 1, 1, 0, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[1, 1, 1, 1, 1, 1, 1]
+		], //1
+		[
+			[0, 1, 1, 1, 1, 1, 0],
+			[1, 1, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 1, 1, 0, 0, 0],
+			[0, 1, 1, 0, 0, 0, 0],
+			[1, 1, 0, 0, 0, 0, 0],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 1, 1, 1, 1, 1]
+		], //2
+		[
+			[1, 1, 1, 1, 1, 1, 1],
+			[0, 0, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 1, 1, 1, 0, 0],
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[0, 1, 1, 1, 1, 1, 0]
+		], //3
+		[
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 1, 1, 1, 0],
+			[0, 0, 1, 1, 1, 1, 0],
+			[0, 1, 1, 0, 1, 1, 0],
+			[1, 1, 0, 0, 1, 1, 0],
+			[1, 1, 1, 1, 1, 1, 1],
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 1, 1, 1, 1]
+		], //4
+		[
+			[1, 1, 1, 1, 1, 1, 1],
+			[1, 1, 0, 0, 0, 0, 0],
+			[1, 1, 0, 0, 0, 0, 0],
+			[1, 1, 1, 1, 1, 1, 0],
+			[0, 0, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[0, 1, 1, 1, 1, 1, 0]
+		], //5
+		[
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 1, 1, 0, 0, 0],
+			[0, 1, 1, 0, 0, 0, 0],
+			[1, 1, 0, 0, 0, 0, 0],
+			[1, 1, 0, 1, 1, 1, 0],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[0, 1, 1, 1, 1, 1, 0]
+		], //6
+		[
+			[1, 1, 1, 1, 1, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 0, 1, 1, 0, 0, 0],
+			[0, 0, 1, 1, 0, 0, 0],
+			[0, 0, 1, 1, 0, 0, 0],
+			[0, 0, 1, 1, 0, 0, 0]
+		], //7
+		[
+			[0, 1, 1, 1, 1, 1, 0],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[0, 1, 1, 1, 1, 1, 0],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[0, 1, 1, 1, 1, 1, 0]
+		], //8
+		[
+			[0, 1, 1, 1, 1, 1, 0],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[1, 1, 0, 0, 0, 1, 1],
+			[0, 1, 1, 1, 0, 1, 1],
+			[0, 0, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 1, 1, 0],
+			[0, 0, 0, 1, 1, 0, 0],
+			[0, 1, 1, 0, 0, 0, 0]
+		], //9
+		[
+			[0, 0, 0, 0],
+			[0, 0, 0, 0],
+			[0, 1, 1, 0],
+			[0, 1, 1, 0],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0],
+			[0, 1, 1, 0],
+			[0, 1, 1, 0],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0]
+		] //:
+	];
+
+var RADIUS = 6;
+var MARGIN_TOP = 100;
+var MARGIN_LEFT = 50;
+var ballColors = ["#9f90cd", "#ddd", "#af672d", "#aaafff", "yellow", "#0912af", "pink", "#346a231", "#a91eed"];
+var balls = [];
+var curDate;
+/** 绘制数字
+ * @param  ctx绘图上下文
+ * @param  x坐标轴
+ * @param  y坐标轴
+ * @param  num数字
+ */
+var draw = function(ctx, x, y, num) {
+	var points = digit[num];
+	for (var i = 0; i < points.length; i++) {
+		for (var j = 0; j < points[i].length; j++) {
+			if (points[i][j] == 1) {
+				ctx.beginPath();
+				ctx.arc(x + j * (RADIUS * 2 + 1), y + i * (RADIUS * 2 + 1), RADIUS, 0, 2 * Math.PI);
+				ctx.fillStyle = "#aaa";
+				ctx.fill();
+			}
+		}
+	}
+}
+var ball = {
+	x: 512,
+	y: 10,
+	g: 2,
+	vx: -4,
+	vy: 0,
+	color: "#a368dc"
+};
+// 渲染时钟
+var renderClock = function(context) {
+		var date = new Date();
+		var HOUR = date.getHours();
+		var MINUTE = date.getMinutes();
+		var SECOND = date.getSeconds();
+
+		draw(context, MARGIN_LEFT, MARGIN_TOP, parseInt(HOUR / 10));
+		draw(context, MARGIN_LEFT + 1 * 18 * RADIUS, MARGIN_TOP, HOUR % 10);
+		draw(context, MARGIN_LEFT + 2 * 18 * RADIUS, MARGIN_TOP, 10);
+		draw(context, MARGIN_LEFT + 3 * 18 * RADIUS, MARGIN_TOP, parseInt(MINUTE / 10));
+		draw(context, MARGIN_LEFT + 4 * 18 * RADIUS, MARGIN_TOP, MINUTE % 10);
+		draw(context, MARGIN_LEFT + 5 * 18 * RADIUS, MARGIN_TOP, 10);
+		draw(context, MARGIN_LEFT + 6 * 18 * RADIUS, MARGIN_TOP, parseInt(SECOND / 10));
+		draw(context, MARGIN_LEFT + 7 * 18 * RADIUS, MARGIN_TOP, SECOND % 10);
+		var nextDate = new Date();
+		if (curDate.getSeconds() != nextDate.getSeconds()) {
+			curDate = nextDate;
+			addBalls(context, MARGIN_LEFT + 7 * 18 * RADIUS, MARGIN_TOP, curDate % 10);
+			// 防止性能损耗，移去多余的球
+			var curIndex = 0;
+			while (balls.length > 200) {
+				balls.splice(curIndex, 1);
+				curIndex++;
+			}
+		}
+		console.log(balls.length);
+	}
+	// 加小球
+var addBalls = function(context, x, y, num) {
+		var points = digit[num];
+		for (var i = 0; i < points.length; i++) {
+			for (var j = 0; j < points[i].length; j++) {
+				if (points[i][j] == 1) {
+					var rad = parseInt(Math.random(0, 1) * 9) + 1;
+					var ball = {
+						x: x + j * (RADIUS * 2 + 1),
+						y: y + i * (RADIUS * 2 + 1),
+						color: ballColors[rad],
+						vx: Math.pow(-1, j) * rad,
+						vy: Math.pow(-1, j + 1) * rad,
+						g: rad
+					};
+					balls.push(ball);
+				}
+			}
+		}
+	}
+	// 画小球
+var renderBall = function(context) {
+
+		for (var i = 0; i < balls.length; i++) {
+			var ball = balls[i];
+			ball.x += ball.vx;
+			ball.y += ball.vy;
+			ball.vy += ball.g;
+			if (ball.y > 500 - RADIUS) {
+				ball.y = 500 - RADIUS;
+				ball.vy = -ball.vy * 0.5;
+			}
+			context.beginPath();
+			context.arc(ball.x, ball.y, RADIUS, 0, 2 * Math.PI);
+			context.closePath();
+			context.fillStyle = ball.color;
+			context.fill();
+		}
+	}
+	// 初始化
+var init = function() {
+		var canvas = document.getElementById("canvas");
+		var context = canvas.getContext("2d");
+		curDate = new Date();
+		window.setInterval(function() {
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			renderClock(context);
+			renderBall(context);
+		}, 50);
+	}
+	// 加载
+window.onload = function() {
+	init();
+}
+	</script>
+</body>
+</html>
